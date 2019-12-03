@@ -13,7 +13,7 @@ const INTERVAL = 1
 
 
 var logStats map[string][]Stats
-func Start(duration int) {
+func Start(duration int,wg1 *sync.WaitGroup) {
 	logStats = make(map[string][]Stats,0)
 	var wg *sync.WaitGroup
 	wg = &sync.WaitGroup{}
@@ -35,6 +35,7 @@ func Start(duration int) {
 		}()
 		count++
 	}
+	wg1.Done()
 }
 
 func Write(){

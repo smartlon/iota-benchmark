@@ -2,11 +2,15 @@ package main
 
 import (
 	"github.com/smartlon/iota-benchmark/docker"
+	"sync"
 	"time"
 )
 
 func main () {
-	go docker.Start(2)
-	time.Sleep(time.Duration(5)*time.Second)
+	var wg1 *sync.WaitGroup
+	wg1 = sync.WaitGroup{}
+	wg1.Add(1)
+	go docker.Start(2,wg1)
+	wg1.Wait()
 	docker.Write()
 }
