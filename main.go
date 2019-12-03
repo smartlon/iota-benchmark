@@ -6,10 +6,7 @@ import (
 )
 
 func main () {
-	stop := make(chan bool)
-	go docker.Start(stop)
-	time.Sleep(time.Duration(2)*time.Second)
-	stop <- true
-	<-stop
+	go docker.Start(2)
+	time.Sleep(time.Duration(5)*time.Second)
 	docker.Write()
 }
