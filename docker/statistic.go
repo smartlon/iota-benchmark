@@ -22,8 +22,9 @@ Loop:
 		case <-timeout:
 			fmt.Println("timeout")
 			break Loop
-		case <-time.After(time.Duration(INTERVAL) * time.Millisecond):
+		default:
 			wg.Add(1)
+			time.After(time.Duration(INTERVAL) * time.Millisecond)
 			go func() {
 				stats,err := DefaultCommunicator.Stats()
 				if err != nil {
