@@ -35,6 +35,7 @@ func Start(duration int,wg1 *sync.WaitGroup) {
 		}()
 		count++
 	}
+	wg.Wait()
 	wg1.Done()
 }
 
