@@ -15,27 +15,28 @@ func Start(duration int) {
 	var wg sync.WaitGroup
 	logStats = make(map[string][]Stats,0)
 	timeout := time.After(time.Second * time.Duration(duration))
-	wg.Add(1)
-	go func() {
-		for {
-			select {
-				case <-timeout:
-					fmt.Println("timeout")
+
+Loop:
+	for {
+		select {
+		case <-timeout:
+			fmt.Println("timeout")
+			break Loop
+		case <-time.After(time.Duration(INTERVAL) * time.Millisecond):
+			wg.Add(1)
+			go func() {
+				stats,err := DefaultCommunicator.Stats()
+				if err != nil {
 					return
-				default:
-					time.AfterFunc(time.Duration(INTERVAL) * time.Millisecond,func() {
-						stats,err := DefaultCommunicator.Stats()
-						if err != nil {
-							return
-						}
-						for _,stat := range stats {
-							logStats[stat.Container] = append(logStats[stat.Container],stat)
-						}
-					})
-			}
+				}
+				for _,stat := range stats {
+					logStats[stat.Container] = append(logStats[stat.Container],stat)
+				}
+				wg.Done()
+			}()
 		}
-		wg.Done()
-	}()
+	}
+
 	wg.Wait()
 }
 
