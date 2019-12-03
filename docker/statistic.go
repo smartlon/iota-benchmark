@@ -10,35 +10,34 @@ import (
 
 const INTERVAL = 1
 
-var logStats map[string][]Stats
-func Start(duration int) {
-	var wg sync.WaitGroup
-	logStats = make(map[string][]Stats,0)
-	timeout := time.After(time.Second * time.Duration(duration))
 
-Loop:
-	for {
+var logStats map[string][]Stats
+func Start(stop chan bool) {
+	logStats = make(map[string][]Stats,0)
+	var wg *sync.WaitGroup
+	wg = &sync.WaitGroup{}
+LOOP:
+	for range time.Tick(time.Duration(INTERVAL) * time.Millisecond) {
 		select {
-		case <-timeout:
-			fmt.Println("timeout")
-			break Loop
+		case <-stop:
+			break LOOP
 		default:
 			wg.Add(1)
-			time.After(time.Duration(INTERVAL) * time.Millisecond)
 			go func() {
-				stats,err := DefaultCommunicator.Stats()
+				stats, err := DefaultCommunicator.Stats()
 				if err != nil {
 					return
 				}
-				for _,stat := range stats {
-					logStats[stat.Container] = append(logStats[stat.Container],stat)
+				for _, stat := range stats {
+					logStats[stat.Container] = append(logStats[stat.Container], stat)
 				}
 				wg.Done()
 			}()
 		}
 	}
+	wg.Done()
+	stop<-true
 
-	wg.Wait()
 }
 
 func Write(){
