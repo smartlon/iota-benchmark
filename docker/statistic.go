@@ -19,7 +19,7 @@ func Start(duration int,wg1 *sync.WaitGroup) {
 	wg = &sync.WaitGroup{}
 	count :=0
 	for range time.Tick(time.Duration(INTERVAL) * time.Millisecond) {
-		if count>=duration {
+		if count>=duration*1000 {
 			break
 		}
 		wg.Add(1)
