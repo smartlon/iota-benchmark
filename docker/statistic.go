@@ -20,6 +20,7 @@ LOOP:
 	for range time.Tick(time.Duration(INTERVAL) * time.Millisecond) {
 		select {
 		case <-stop:
+			log.Println("exit loop")
 			break LOOP
 		default:
 			wg.Add(1)
