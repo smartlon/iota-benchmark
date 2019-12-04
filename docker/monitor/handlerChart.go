@@ -56,7 +56,10 @@ func (cp *ContainstatsPlot) MakeChart(ci ChartInfo) {
 	for _, chartData := range ci.ChartDatas {
 		var xydatas plotter.XYs
 		for _, xyData := range chartData {
-			xydatas = append(xydatas, XYData{xyData.X, xyData.Y})
+			xyConverter := plotter.XYs{
+				{xyData.X, xyData.Y},
+			}
+			xydatas = append(xydatas,xyConverter[0] )
 		}
 		points = append(points, xydatas)
 	}
