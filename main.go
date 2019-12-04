@@ -1,15 +1,35 @@
 package main
 
 import (
-	"github.com/smartlon/iota-benchmark/docker"
-	"sync"
+	"github.com/smartlon/iota-benchmark/docker/config"
+	"github.com/smartlon/iota-benchmark/docker/logging"
+	"github.com/smartlon/iota-benchmark/docker/monitor"
+	"time"
 )
 
-func main () {
-	var wg1 *sync.WaitGroup
-	wg1 = &sync.WaitGroup{}
-	wg1.Add(1)
-	go docker.Start(2,wg1)
-	wg1.Wait()
-	docker.Write()
+var logger = lancetlogging.GetLogger()
+
+func main() {
+	cfy, err := config.LoadFromFile("./docker/config/config.yaml")
+	if err != nil {
+		logger.Errorf("LoadFromFile Error: %s", err)
+	}
+	cf := cfy.GetAllConfig()
+	monitor.NewMail(cf.Mail.MailUser, cf.Mail.MailPasswd, cf.Mail.SmtpHost, cf.Mail.ReceiveMail)
+	mcs := make([]*monitor.MonitorCli, 0)
+	for hostname, host := range cf.Hosts {
+		mc, err := monitor.NewMonitorCliFromConf(hostname, host.Address, host.ApiVersion, cf.IntervalTime, cf.Tls.TlsSwitch, cf.Tls.ClientCertPath)
+		if err != nil {
+			logger.Errorf("NewMonitorCliFromConf Error: %s", err)
+			panic(err)
+		}
+		mcs = append(mcs, mc)
+	}
+	monitorSwitch := monitor.NewMonitorSwitch(mcs)
+	monitor.FinishMonitor = make(chan bool)
+
+	monitorSwitch.StartMonitor()
+	logger.Debugf("MonitorTime  is  %s", cf.Time)
+	time.Sleep(cf.Time)
+	monitorSwitch.StopMonitor()
 }

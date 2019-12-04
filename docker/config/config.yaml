@@ -1,0 +1,25 @@
+monitorHosts:
+##监控的服务器名称
+  host1:
+  ##监控的服务器地址，和docker端口
+    address: tcp://202.117.43.212:2375
+    apiVersion: 1.26
+
+intervalTime: 0.001s
+monitorTime: 2s
+monitorSwitch: false
+tls:
+    tlsSwitch: false
+##证书顺序为1、ca.crt 2、cert.pem 3、key.pem,不能错
+    clientCertPath:
+          - config/tls/ca.crt
+          - config/tls/cert.pem
+          - config/tls/key.pem
+##当监控的容器挂掉的时候，将会通过邮件通知
+mailNotice:
+  mailUser: xxx@qq.com
+  mailPasswd: 8WDSaWvjehE5zRek
+  smtpHost: smtp.exmail.qq.com:587
+  receiveMail:
+    - zooqkl@gmail.com
+    - 728129018@qq.com
