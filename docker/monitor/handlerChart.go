@@ -84,7 +84,7 @@ func (cp *ContainstatsPlot) MakeChart(ci ChartInfo) {
 		logger.Fatalf("MakeChart %s  Error: %s", fileName, err)
 	}
 	// clear old data
-	p.Clear()
+	//p.Clear()
 	logger.Debugf("MakeChart %s  Success!", fileName)
 }
 
