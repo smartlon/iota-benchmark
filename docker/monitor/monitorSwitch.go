@@ -58,7 +58,7 @@ func (ms *MonitorSwitch) StopMonitor() {
 		}
 		cpuAvg = cpuAvg/float64(clen)
 		memAvg = memAvg/float64(clen)
-		fmt.Println("cname=%s, cpuMax=%6.2f, cpuAvg=%6.2f,memMax=%6.2f,memAvg=%6.2f, netIN=%6.2f, netOUT=%6.2f",cname,cpuMax,cpuAvg,memMax,memAvg,netIN,netOUT)
+		fmt.Println(fmt.Sprintf("cname=%s, cpuMax=%6.2f, cpuAvg=%6.2f,memMax=%6.2f,memAvg=%6.2f, netIN=%6.2f, netOUT=%6.2f",cname,cpuMax,cpuAvg,memMax,memAvg,netIN,netOUT))
 	}
 	//HandleData(cl, intervalTime)
 	//logger.Debugf("Make the chart completed! please watch in 'Lancet/resultData/ChartFile' Contents !")
