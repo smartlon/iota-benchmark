@@ -1,0 +1,21 @@
+{
+  "uris": [
+    "tcp://icc.iota-tangle.io:5556",
+    "tcp://icc.iota-tangle.io:5557",
+    "tcp://icc.iota-tangle.io:5558",
+    "tcp://trinity.iota-tangle.io:5559",
+    "tcp://iota-tangle.io:5560",
+    "tcp://iota-tangle.io:5561",
+    "tcp://node01.x-vps.com:5556",
+    "tcp://node02.x-vps.com:5556",
+    "tcp://node03.x-vps.com:5556",
+    "tcp://node04.x-vps.com:5556",
+    "tcp://carlos.thetangle.org:5542",
+    "tcp://justin.thetangle.org:5542",
+    "tcp://z-icc-1.iota.partners:5556",
+    "tcp://z-icc-2.iota.partners:5556",
+    "tcp://z-icc-3.iota.partners:5556",
+    "tcp://z-icc-4.iota.partners:5556",
+    "tcp://159.69.111.33:5556"
+  ]
+}

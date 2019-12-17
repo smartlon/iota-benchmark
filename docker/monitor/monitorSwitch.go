@@ -2,7 +2,6 @@ package monitor
 
 import (
 	"fmt"
-	"io/ioutil"
 	"strings"
 	"time"
 )
@@ -31,17 +30,38 @@ func (ms *MonitorSwitch) StopMonitor() {
 	//mcs := ms.MonitorCliList
 	FinishMonitor <- true
 	close(FinishMonitor)
-	cl, err := getRecordDataList()
-	if err != nil {
-		logger.Errorf("getRecordDataList Error: %s", err)
-		return
+	//cl, err := getRecordDataList()
+	//if err != nil {
+	//	logger.Errorf("getRecordDataList Error: %s", err)
+	//	return
+	//}
+	//var intervalTime float64
+	//if len(ms.MonitorCliList) > 0 {
+	//	intervalTime = ms.MonitorCliList[0].intervalTime.Seconds()
+	//}
+	for cname,cstats := range cstatsMap {
+		var cpuMax,cpuAvg,memMax,memAvg float64
+		clen := len(cstats)
+		netIN := cstats[len(cstats)-1].NetIN
+		netOUT := cstats[len(cstats)-1].NetOUT
+		cpuMax = cstats[0].Cpu
+		memMax = cstats[0].Memory
+		for _,cstat := range cstats {
+			if  cpuMax <cstat.Cpu {
+				cpuMax = cstat.Cpu
+			}
+			cpuAvg += cstat.Cpu
+			if  memMax <cstat.Memory {
+				memMax = cstat.Memory
+			}
+			memAvg += cstat.Memory
+		}
+		cpuAvg = cpuAvg/float64(clen)
+		memAvg = memAvg/float64(clen)
+		fmt.Println("cname=%s, cpuMax=%6.2f, cpuAvg=%6.2f,memMax=%6.2f,memAvg=%6.2f, netIN=%6.2f, netOUT=%6.2f",cname,cpuMax,cpuAvg,memMax,memAvg,netIN,netOUT)
 	}
-	var intervalTime float64
-	if len(ms.MonitorCliList) > 0 {
-		intervalTime = ms.MonitorCliList[0].intervalTime.Seconds()
-	}
-	HandleData(cl, intervalTime)
-	logger.Debugf("Make the chart completed! please watch in 'Lancet/resultData/ChartFile' Contents !")
+	//HandleData(cl, intervalTime)
+	//logger.Debugf("Make the chart completed! please watch in 'Lancet/resultData/ChartFile' Contents !")
 	//for _, mc := range mcs {
 	//	FinishChart.Add(1)
 	//	cl, _ := mc.GetRecordDataList()
@@ -83,24 +103,6 @@ func startOneMonitor(monCli *MonitorCli) {
 		i++
 		time.Sleep(monCli.intervalTime)
 	}
-}
-
-func getRecordDataList() ([]*ContainerInfo, error) {
-	var containerList = []*ContainerInfo{}
-	logger.Debugf("Start get ExcelFileList ！ ")
-	excelFilelist, err := ioutil.ReadDir("./resultData/ExcelFile/")
-	if err != nil {
-		err := fmt.Errorf("get excelFilelist fail! Error: %s", err)
-		return nil, err
-	}
-	for _, excelFile := range excelFilelist {
-		fileName := strings.Split(excelFile.Name(), ".xls")[0]
-		hostName := strings.Split(fileName, "-")[0]
-		continueName := strings.Replace(fileName, hostName+"-", "", 1)
-		conInfo := &ContainerInfo{hostName, "", continueName}
-		containerList = append(containerList, conInfo)
-	}
-	return containerList, nil
 }
 
 func diffContainerlist(containerList1 []*ContainerInfo, containerList2 []*ContainerInfo) ([]string, bool) {

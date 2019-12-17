@@ -6,8 +6,8 @@ monitorHosts:
     apiVersion: 1.26
 
 intervalTime: 0.001s
-monitorTime: 2s
-monitorSwitch: false
+monitorTime: 5s
+monitorSwitch: true
 tls:
     tlsSwitch: false
 ##证书顺序为1、ca.crt 2、cert.pem 3、key.pem,不能错

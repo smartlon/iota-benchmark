@@ -43,3 +43,8 @@ func (cf *ConfigFactory) GetMonitorTimeConfig() time.Duration {
 func (cf *ConfigFactory) GetAllConfig() Config {
 	return *cf.cfg
 }
+
+func (cf *ConfigFactory) SetMonitorSwitch(swith bool) bool  {
+	cf.cfg.MonitorSwitch = swith
+	return cf.cfg.MonitorSwitch
+}

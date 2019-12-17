@@ -20,12 +20,12 @@ type ContainerInfo struct {
 type ContainerStatsSpec struct {
 	HostName      string
 	ContainerName string
-	Cpu           string
-	Memory        string
-	NetIN         string
-	NetOUT        string
-	BlockRead     string
-	BlockWrite    string
+	Cpu           float64
+	Memory        float64
+	NetIN         float64
+	NetOUT        float64
+	BlockRead     float64
+	BlockWrite    float64
 	ReadTime      string
 }
 

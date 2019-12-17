@@ -24,6 +24,12 @@ type MonitorCli struct {
 
 var FinishMonitor chan bool
 
+var cstatsMap map[string][]ContainerStatsSpec
+
+func init(){
+	cstatsMap = make(map[string][]ContainerStatsSpec,0)
+}
+
 func NewMonitorCliFromConf(hostname string, host string, apiVersion string, intervalTime time.Duration, tlsSwitch bool, tlsCertPath []string) (*MonitorCli, error) {
 	moncli := &MonitorCli{hostname, host, apiVersion, intervalTime, nil, tlsSwitch, tlsCertPath}
 	dkcli, err := moncli.newClient(tlsSwitch, tlsCertPath)
@@ -120,12 +126,12 @@ func (mc *MonitorCli) GetContainStats(hostname string, containName string) (*Con
 		return nil, fmt.Errorf("[calculateReadTime] Error:%s", err)
 	}
 	conStats.ContainerName = containName
-	conStats.Cpu = fmt.Sprintf("%6.2f", cpu)
-	conStats.Memory = fmt.Sprintf("%6.2f", memory)
-	conStats.NetIN = fmt.Sprintf("%6.2f", netIO[0])
-	conStats.NetOUT = fmt.Sprintf("%6.2f", netIO[1])
-	conStats.BlockRead = fmt.Sprintf("%6.2f", blockIO[0])
-	conStats.BlockWrite = fmt.Sprintf("%6.2f", blockIO[1])
+	conStats.Cpu = cpu
+	conStats.Memory = memory
+	conStats.NetIN =  netIO[0]
+	conStats.NetOUT =  netIO[1]
+	conStats.BlockRead = blockIO[0]
+	conStats.BlockWrite =  blockIO[1]
 	conStats.ReadTime = readTime
 	conStats.HostName = hostname
 	return conStats, nil
@@ -137,10 +143,11 @@ func (mc *MonitorCli) MonitorContain(hostname string, cname string) {
 		logger.Errorf("GetContainStats Error: %s", err)
 		return
 	}
-	handler := NewHandlerStatsFile(hostname, cname)
-	result, err := handler.WriteStatsFile(*cstats)
-	if err != nil {
-		logger.Errorf("WriteStatsFile Error: %s", err)
-	}
-	logger.Debugf("Container [%s] WriteStatsFile 's result is   %t", hostname+"-"+cname, result)
+	cstatsMap[cname] = append(cstatsMap[cname],*cstats)
+	//handler := NewHandlerStatsFile(hostname, cname)
+	//result, err := handler.WriteStatsFile(*cstats)
+	//if err != nil {
+	//	logger.Errorf("WriteStatsFile Error: %s", err)
+	//}
+	//logger.Debugf("Container [%s] WriteStatsFile 's result is   %t", hostname+"-"+cname, result)
 }
