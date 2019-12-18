@@ -172,7 +172,7 @@ func accSpammer(stopAfter int, nodeToUse ...string) {
 
 	go func() {
 		for {
-
+			time.Sleep(time.Millisecond*2)
 			tips, err := iotaAPI.GetTransactionsToApprove(uint64(*depth))
 			if err != nil {
 				fmt.Printf("error sending: %s\n", err.Error())
