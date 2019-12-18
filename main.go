@@ -35,7 +35,7 @@ func main() {
 	logger.Debugf("MonitorTime  is  %s", cf.Time)
 	nodes := make([]string,0)
 	var wg sync.WaitGroup
-	for _,mc := range mcs {
+	for _,mc := range monitorSwitch.MonitorCliList {
 		containerInfo,err := mc.GetContainList()
 		if err != nil {
 			logger.Errorf("GetContainList Error: %s", err)
