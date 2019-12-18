@@ -30,9 +30,9 @@ func must(err error) {
 
 var instancesNum = flag.Int("instances", 5, "spammer instance counts")
 var node = flag.String("node", "http://127.0.0.1:14265", "node to use")
-var nodes = flag.String("nodes", "", "nodes to use")
-var depth = flag.Int("depth", 1, "depth for gtta")
-var mwm = flag.Int("mwm", 1, "mwm for pow")
+var nodes = flag.String("nodes", "http://127.0.0.1:14265,http://127.0.0.1:14266,http://127.0.0.1:14267", "nodes to use")
+var depth = flag.Int("depth", 16, "depth for gtta")
+var mwm = flag.Int("mwm", 9, "mwm for pow")
 var tag = flag.String("tag", "SPAMMER", "tag of txs")
 var addr = flag.String("addr", strings.Repeat("9", 81), "the target address of the spam")
 var zmq = flag.Bool("zmq", false, "use a zmq stream of txs as tips")
@@ -47,7 +47,7 @@ var bcBatchSize = flag.Int("bc-batch-size", 100, "how many txs to batch before s
 var targetAddr trinary.Hash
 var emptySeed = strings.Repeat("9", 81)
 
-func Spammer() {
+func Spammer(nodes []string,wg *sync.WaitGroup) {
 	flag.Parse()
 	*addr = trinary.Pad(*addr, 81)
 	var err error
@@ -62,11 +62,10 @@ func Spammer() {
 			accSpammer(*zmqBuf)
 		}
 	} else {
-		if len(*nodes) > 0 {
-			split := strings.Split(*nodes, ",")
-			for _, n := range split {
+		if len(nodes) > 1 {
+			for _, node := range nodes {
 				for i := 0; i < *instancesNum; i++ {
-					accSpammer(-1, n)
+					accSpammer(-1, node)
 				}
 			}
 		} else {
@@ -85,18 +84,18 @@ func Spammer() {
 		points[index] = s
 		index++
 		if index == 5 {
-			index = 0
 			var deltaSum int64
 			for i := 0; i < pointsCount-1; i++ {
 				deltaSum += points[i+1] - points[i]
 			}
 			tps = float64(deltaSum) / float64(pointsCount)
+			break
 		}
-		fmt.Printf("%s\r", pad)
-		fmt.Printf("\rspammed %d (tps %.2f)", s, tps)
 		<-time.After(time.Duration(1) * time.Second)
 	}
-	<-make(chan struct{})
+	fmt.Printf("%s\r", pad)
+	fmt.Printf("\rspammed %d (tps %.2f)",atomic.LoadInt64(&spammed), tps)
+	wg.Done()
 }
 
 const seedLength = 81

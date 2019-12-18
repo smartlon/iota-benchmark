@@ -88,7 +88,7 @@ func (mc *MonitorCli) GetContainList() ([]*ContainerInfo, error) {
 		panic(err)
 	}
 	for _, container := range containers {
-		conInfo := &ContainerInfo{mc.Hostname, container.ID[:10], strings.Split(container.Names[0], "/")[1]}
+		conInfo := &ContainerInfo{mc.Hostname, container.ID[:10], strings.Split(container.Names[0], "/")[1],container.Ports}
 		containerList = append(containerList, conInfo)
 	}
 	return containerList, nil

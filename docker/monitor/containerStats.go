@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/bitly/go-simplejson"
+	"github.com/docker/docker/api/types"
 	"github.com/smartlon/iota-benchmark/docker/logging"
 	"strconv"
 	"strings"
@@ -14,6 +15,7 @@ type ContainerInfo struct {
 	HostName      string
 	ContainerID   string
 	ContainerName string
+	Port   []types.Port
 	//ContainerStats ContainerStatsSpec
 }
 
