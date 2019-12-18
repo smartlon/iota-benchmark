@@ -41,7 +41,7 @@ func Monitor(wg1 *sync.WaitGroup) {
     go transactions.StartConfirmationFeed(value.Zmq_Address)
     go transactions.StartDoubleFeed(value.Zmq_Address)
     wg.Add(1)
-    time.Sleep(time.Duration(value.Interval))
+    time.Sleep(time.Second*time.Duration(value.Interval))
     go transactions.StartLog(value.Interval,&wg)
     wg.Wait()
     wg1.Done()
