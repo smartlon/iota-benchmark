@@ -67,9 +67,9 @@ func StartTxFeed(address string) {
     for {
         msg, err := socket.Recv(0)
         must(err)
-        fmt.Printf("received msg: %s\n",msg)
+        //fmt.Printf("received msg: %s\n",msg)
         tx := buildTxFromZMQData(msg)
-        fmt.Printf("received tx: %s\n",tx)
+        //fmt.Printf("received tx: %s\n",tx)
         if tx == nil {
             fmt.Printf("tx: receive error! message format error\n")
             continue
@@ -350,7 +350,7 @@ func buildTxFromZMQData(msg string) *Transaction {
         return nil
     }
     tx.Tag = msgSplit[12]
-    fmt.Printf("received tx: %s\n",tx)
+    //fmt.Printf("received tx: %s\n",tx)
     return tx
 }
 
